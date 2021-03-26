@@ -1,0 +1,9 @@
+./gifit.sh inter1/movie_color2
+./gifit.sh inter2/movie_color2
+./gifit.sh inter3/movie_color2
+./gifit.sh inter4/movie_color2
+./gifit.sh inter5/movie_color2
+./gifit.sh inter6/movie_color2
+./gifit.sh intra1/movie_color2
+./gifit.sh intra2/movie_color2
+./gifit.sh intra3/movie_color2

@@ -1,0 +1,680 @@
+
+
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<!-- Global site tag (gtag.js) - Google Analytics -->
+<!-- <script async src="https://www.googletagmanager.com/gtag/js?id=UA-154419941-1"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-154419941-1');
+</script> -->
+
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap core CSS -->
+    <!-- <link rel="icon" type="image/png" href="images/sphere_tracing.png"> -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css" integrity="sha384-/Y6pD6FV/Vv2HJnA6t+vslU6fwYXjCFtcEpHbNJ0lyAFsXTsjBbfaDjzALeQsN6M" crossorigin="anonymous">
+    <!-- Custom styles for this template -->
+    <link href="css/distRenderer.css" rel="stylesheet">
+    <base target="_blank">
+</head>
+
+<title>HumanGPS: Geodesic PreServing Feature for Dense Human Correspondence</title>
+
+<body>
+
+<style>/* Stylesheet for webpages which compare images in multiple directories. */
+
+@import url("https://fonts.googleapis.com/css?family=Open+Sans:300,600,700");
+
+/* Elements */
+
+/*body {
+    margin: 0;
+    background-color: #2e2e2e;
+}
+
+h1 {
+    color: #fff;
+    font-family: 'Open Sans', arial, sans-serif;
+}
+h2 {
+    color: #fff;
+    font-family: 'Open Sans', arial, sans-serif;
+}
+h3 {
+    color: #fff;
+    font-family: 'Open Sans', arial, sans-serif;
+}
+
+p {
+    font-family: 'Open Sans', arial, sans-serif;
+}
+
+a {
+  color : #ADD8FF;
+}
+
+td {
+    text-align: center;
+    color: #fff;
+}
+
+td > p {
+    margin-bottom: 5px;
+    margin-top: 0;
+}*/
+
+/* IDs */
+
+#images {
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+    text-align: center;
+    width: 800px;
+}
+
+#images > .image_wrapper {
+    display: inline-block;
+    margin: 15px;
+    width: 770px;
+}
+
+/* Classes */
+
+.bold {
+    font-weight: bold;
+}
+
+.bottom {
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 1;
+}
+
+.bottom_circle {
+    z-index: 2;
+}
+
+.comparison_table {
+    border: 2px solid #444;
+    margin: 0 auto;
+}
+
+.comparison {
+    cursor: pointer;
+}
+
+.comparison:hover {
+    box-shadow:0 0 1px 1px #ddd;
+}
+
+.comparisons {
+    height: 82px;
+    margin: 0;
+    padding: 0;
+}
+
+.comparisons_menu {
+    height: 30px;
+}
+
+.comparisons > ul {
+    padding: 10px;
+}
+
+.comparisons > ul li {
+    background-color: #999;
+    border-radius: 7px;
+    color: white;
+    display: inline-block;
+    float: left;
+    font-size: 82.5%;
+    height: 28px;
+    line-height: 1.9;
+    list-style: none;
+    margin: 0 15px 10px 0;
+    padding: 0 12px;
+    text-align: -webkit-match-parent;
+}
+
+.comparisons > ul li.top_active, .top_circle {
+    background-color: #4285f4;
+}
+
+.comparisons > ul li.bottom_active, .bottom_circle {
+    background-color: #db3236;
+}
+
+.header {
+    background: #2e2e2e;
+    border-bottom: 1px solid #e5e5e5;
+    height: 140px;
+    left: 0;
+    position: relative;
+    top: 0;
+    width: 100%;
+}
+
+.hover_images .top_image,.bottom_image {
+    width: 770px;
+}
+
+.image_wrapper > .hover_images {
+    display: inline-block;
+    position: relative;
+}
+
+.linksline {
+    background: #454545;
+    border-bottom: 1px solid #f2f2f2;
+    color: #fff;
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 15px;
+    font-weight: bold;
+    min-height: 28px;
+    overflow: hidden;
+    padding: 0 12px;
+    padding-top: 6px;
+    text-align: center;
+}
+
+.log_info {
+    font-family: 'Open Sans';
+    color: #fff;
+    margin: 10px auto;
+    width: 1200px;
+    font-size: 12px;
+}
+
+.menu {
+    background: #fcfcfc;
+    border-bottom: 1px solid #f2f2f2;
+    color: #444;
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    min-height: 28px;
+    overflow: hidden;
+    padding: 0 12px;
+}
+
+.menu > ul {
+    -webkit-margin-start: 0;
+    -webkit-margin-end: 0;
+    left: 10%;
+    list-style: none;
+    margin: auto;
+    max-width: 1250px;
+    padding: 0;
+    position: relative;
+}
+
+.menu > ul a {
+    display: inline-block;
+    text-decoration: underline;
+}
+
+.menu > ul li {
+    color: #444;
+    display: inline-block;
+    float: left;
+    height: 28px;
+    line-height: 2.4;
+    list-style: none;
+    margin: 0 25px 0 0;
+    text-align: -webkit-match-parent;
+}
+
+.table_header {
+    background: #454545;
+    color: #fff;
+    font-family: 'Open Sans', Arial, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+}
+
+.table_cell_input {
+    width: 100%;
+}
+
+.title {
+    left: 10%;
+    position: relative;
+    min-width: 550px;
+    width: 90%;
+}
+
+.title > p {
+    border-left: 1px solid #babcc0;
+    color: #fff;
+    display: inline-block;
+    font-family: 'Open Sans', arial, sans-serif;
+    font-size: 2em;
+    margin: 0;
+    margin-top: 10px;
+    padding-left: 20px;
+    vertical-align: top;
+    width: 800px;
+    height: 50px;
+}
+
+.top {
+    left: 0;
+    position: relative;
+    top: 0;
+    z-index: 2;
+}
+
+.top:hover {
+    opacity: 0;
+}
+
+.top_circle
+.bottom_circle {
+    border-radius: 7.5px;
+    height: 15px;
+    position: absolute;
+    right: 40px;
+    top: 30px;
+    width: 15px;
+}
+
+.top_circle {
+    z-index: 4;
+}
+
+.grid-container {
+        display: grid;
+        grid-template-columns: auto auto auto auto;
+        text-align: center;
+        margin: 0px -10px 0px -10px;
+    }
+.grid-container > div {
+    text-align: center;
+}
+
+.footer {
+        width: 100%;
+        height: 65px;
+        float: left;
+        margin-top: 25px;
+}
+.footer-googleresearch {
+    width: 20%;
+    float: left;
+}
+.footer-google {
+    width: 20%;
+    float: right;
+    text-align: right;
+}
+</style>
+
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+        <a class="navbar-brand" href="#">HumanGPS: Geodesic PreServing Feature for Dense Human Correspondence</a>
+
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarToggle">
+              <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="collapse navbar-collapse" id="navbarToggle">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="#", target="_self">Home</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#Abstract", target="_self">Abstract</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#Paper", target="_self">Paper</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#Vis_feature", target="_self">Demo</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="#Applications", target="_self">Applications</a>
+                </li_self>
+            </ul>
+        </div>
+    </nav>
+
+        <!-- <br><br> -->
+    <div class="container" style="padding-top: 80px; font-size: 20px">
+
+        <div align="center">
+
+            <br>
+
+            <h1 class="text-center" align="center" style="font-size: 50px">
+            Human<font color="#DF6243">G</font><font color="#E0D40B">P</font><font color="#6195E6">S</font>: <font color="#DF6243">Geodesic</font> <font color="#E0D40B">Pre</font><font color="#6195E6">Serving</font>  Feature for Dense Human Correspondence
+            </h1><br>
+            <a href="https://ca.linkedin.com/in/feitong-tan-555200159">Feitong Tan</a><sup style="font-size:12px">1,2</sup> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://uk.linkedin.com/in/danhang-tang-39082a12">Danhang Tang</a><sup style="font-size:12px">1</sup> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://scholar.google.com/citations?user=DB8aKRgAAAAJ&hl=en">Mingsong Dou</a><sup style="font-size:12px">1</sup> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://scholar.google.com/citations?user=gbsZzQEAAAAJ&hl=en">Kaiwen Guo</a><sup style="font-size:12px">1</sup> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://research.google/people/106687/">Rohit Pandey</a><sup style="font-size:12px">1</sup> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://scholar.google.co.uk/citations?user=9HoiYnYAAAAJ&hl=en">Cem Keskin</a><sup style="font-size:12px">1</sup> &nbsp;&nbsp;&nbsp;&nbsp;
+            <br>
+            <a href="https://duruofei.com/">Ruofei Du</a><sup style="font-size:12px">1</sup> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://deqings.github.io/">Deqing Sun</a><sup style="font-size:12px">1</sup> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="http://sofienbouaziz.com/">Sofien Bouaziz</a><sup style="font-size:12px">1</sup> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="http://www.seanfanello.it/">Sean Fanello</a><sup style="font-size:12px">1</sup> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://www.cs.sfu.ca/~pingtan/">Ping Tan</a><sup style="font-size:12px">2</sup> &nbsp;&nbsp;&nbsp;&nbsp;
+            <a href="https://www.zhangyinda.com/">Yinda Zhang</a><sup style="font-size:12px">1</sup>
+            <!-- <br><br> -->
+            <!-- <sup style="font-size:17px">1</sup> Simon Fraser University &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; <sup style="font-size:17px">2</sup> Google -->
+            <!-- <br> -->
+
+            <!-- <a>Simon Fraser University</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <a>Google</a> -->
+
+            <br><br>
+            <sup style="font-size:12px">1</sup> &nbsp;  <a href="https://www.google.com/">Google</a> &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  <sup style="font-size:12px">2</sup> &nbsp; &nbsp;<a href="https://www.sfu.ca/">Simon Fraser University</a>
+
+            <br>
+            <a style="color:black"><img class="img-responsive img-rounded" src="figure/google.png" style="height:40px" alt=""></a> &nbsp; &nbsp;  &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; 
+            &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  
+            <!-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;  -->
+
+            <!-- &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;   -->
+
+            <a style="color:black"><img class="img-responsive img-rounded" src="figure/sfu_logo.png" style="height:40px" alt=""></a>
+            &nbsp; &nbsp; &nbsp; &nbsp; 
+
+            <br>
+            
+            <!-- <br><br> -->
+        </div> 
+    </div>
+
+
+    <!-- Teaser -->
+    <div class="container" style="padding-top: 20px; font-size: 20px">
+    <hr>
+    <br>
+
+        <div align="center">
+        <div class="center">
+            <img class="img-responsive img-rounded" src="figure/teaser.jpg" style="width:100%" alt="">
+            
+        </div>
+        <br>
+        </div>
+    </div><br>
+
+    <!-- Abstract -->
+    <div class="container">
+    <hr>
+    <br>
+    <center>
+        <h2 id="Abstract" style="padding-top: 80px; margin-top: -80px;">Abstract</h2>
+    </center>
+    <br>
+    
+    <p style="font-size: 20px">
+    In this paper, we address the problem of building dense correspondences between human images under arbitrary camera viewpoints and body poses.
+    Prior art either assumes small motion between frames or relies on local descriptors, which cannot handle large motion or visually ambiguous body parts, e.g. left v.s. right hand.
+    In contrast, we propose a deep learning framework that maps each pixel to a feature space, where the feature distances reflect the geodesic distances among pixels as if they were projected onto the surface of a 3D human scan.
+    To this end, we introduce novel loss functions to push features apart according to their geodesic distances on the surface. 
+    Without any semantic annotation, the proposed embeddings automatically learn to differentiate visually similar parts and align different subjects into an unified feature space.
+    Extensive experiments show that the learned embeddings can produce accurate correspondences between images with remarkable generalization capabilities on both intra and inter subjects.
+    </p>
+    </div><br>
+
+    <!-- Paper -->
+    <div class='container'>
+    <hr>
+    <br>
+    <center>
+        <h2 id="Paper" style="padding-top: 80px; margin-top: -80px">Paper</h2>
+    </center>
+    <br>
+    <div class="paper">
+    <div class="grid-container">
+        <div class="item1"><a href=""><img src="figure/paper_page_01.jpg" class="paper-thumbnail" style="width:250px"></a></div>
+        <div class="item2"><a href=""><img src="figure/paper_page_04.jpg" class="paper-thumbnail" style="width:250px"></a></div>
+        <div class="item3"><a href=""><img src="figure/paper_page_06.jpg" class="paper-thumbnail" style="width:250px"></a></div>
+        <div class="item4"><a href=""><img src="figure/paper_page_07.jpg" class="paper-thumbnail" style="width:250px"></a></div>
+    </div>
+
+    <br>
+
+    <center>
+    <span style="font-size:20px">
+        <a href="">[arXiv (Coming Soon)]</a> &nbsp; &nbsp;
+        <a href="">[GitHub (Coming Soon)]</a> &nbsp; &nbsp;
+        <a href="">[Data (Coming Soon)]</a> &nbsp; &nbsp;
+    </span>
+    </center>
+    
+    <br>
+
+    <p style="font-size: 15px">Click to view the paper. Download full resolution version (11M) <a href="paper.pdf">here</a>.</p>
+    <p style="font-size: 15px">Click to view the supplementary. Download full resolution version (9M) <a href="supp.pdf">here</a>.</p>
+    </div>
+
+    <br>
+    <hr>
+    <br>
+
+    <center>
+        <h2 id="Vis_feature" style="padding-top: 80px; margin-top: -80px">HumanGPS v.s. DensePose</h2>
+    </center>
+    <br>
+    <table class="comparison_table" border="1px" cellspacing="3">
+        
+        <tr class="table_header">
+        <td align="center">
+            <a name="right_camera_example_11">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/87X9yw-Emu0" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <a href="#right_camera_example_11" title="right_camera / left_camera">
+            <!-- <p>example_11</p> -->
+            </a>
+            </a>
+            </td>
+            <td>
+            <a name="left_camera_example_11">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/gU0tb28Wgcs" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <a href="#left_camera_example_11" title="left_camera / right_camera">
+            <!-- <p>example_11</p> -->
+            </a>
+            </a>
+            </td>
+            </tr>
+            <tr class="table_header">
+            <td>
+            <a name="right_camera_example_11">
+            <a href="#right_camera_example_11" title="right_camera / left_camera">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/i_1qFL-FyA4" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <!-- <p>example_11</p> -->
+            </a>
+            </a>
+            </td>
+            <td>
+            <a name="left_camera_example_11">
+            <a href="#left_camera_example_11" title="left_camera / right_camera">
+            <iframe width="560" height="315" src="https://www.youtube.com/embed/9RtXrhF3AvY" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+            <!-- <p>example_11</p> -->
+            </a>
+            </a>
+            </td>
+            </tr>
+        </td>
+        </tr>
+        </table>
+        <br>
+        Videos from <a href="https://www.yasamin.page/hdnet_tiktok">Yasamin Jafarian et.al.</a>.  Not used in paper and only for demo purpose.
+        <br>
+        <br>
+
+        <ul>
+            <li>
+            <a href="./humangps_densepose/00037.mp4">HumanGPS v.s. DensePose 1</a>:
+            Click to download demo videos
+            </li>
+            <li>
+            <a href="./humangps_densepose/00038.mp4">HumanGPS v.s. DensePose 2</a>:
+            Click to download demo videos
+            </li>
+            <li>
+            <a href="./humangps_densepose/00043.mp4">HumanGPS v.s. DensePose 3</a>:
+            Click to download demo videos
+            </li>
+            <li>
+            <a href="./humangps_densepose/00044.mp4">HumanGPS v.s. DensePose 4</a>:
+            Click to download demo videos
+            </li>
+            
+            
+        </ul>
+
+    <div class='container'>
+        <hr>
+        <br>
+        <center>
+            <h2 id="Applications" style="padding-top: 80px; margin-top: -80px">Applications</h2>
+        </center>
+        <br>
+        <br>
+
+
+        <h3 style="padding-top: 80px; margin-top: -80px">Nonrigid Tracking and Fusion</h3>
+        <br>
+
+        <center>
+        <h5>Qualitative  comparison  of  non-rigid fusion with learned correspondences</h5>
+            <div class="row">
+                <div class="col-sm-12">
+                    <img src="fusion/fusion0.gif">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-sm-12">
+                    <img src="fusion/fusion1.gif">
+                </div>
+            </div>
+        <br>
+            <h5>Quantitative  comparison  of  non-rigid tracking with learned correspondences</h5>
+        <br>
+        <br>
+
+            <div class="row">
+                <div class="col-sm-11">
+                    <img src="fusion/error.gif">
+                </div>
+                <div class="col-sm-1">
+                    <img src="fusion/error.png">
+                </div>
+            </div>
+        </center>
+    </div>
+
+    <br/>
+    <hr>
+    <!-- Examples -->
+    <div class='container' id="morphing">
+    <br>
+    <h2 style="padding-top: 80px; margin-top: -80px">Morphing Examples</h2>
+    <center>
+
+    <br>
+    <h5>Intra-subject Morphing</h5>
+    <div class="row">
+      <div class="col-sm-4"><img src="morphing/intra1/frame000.png"></div>
+      <div class="col-sm-4"><img src="morphing/intra1/frame100.png"></div>
+      <div class="col-sm-4"><img src="morphing/intra1/movie_color2.gif"></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">Input 1</div>
+      <div class="col-sm-4">Input 2</div>
+      <div class="col-sm-4">Result</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4"><img src="morphing/intra3/frame000.png"></div>
+      <div class="col-sm-4"><img src="morphing/intra3/frame100.png"></div>
+      <div class="col-sm-4"><img src="morphing/intra3/movie_color2.gif"></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">Input 1</div>
+      <div class="col-sm-4">Input 2</div>
+      <div class="col-sm-4">Result</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4"><img src="morphing/intra2/frame000.png"></div>
+      <div class="col-sm-4"><img src="morphing/intra2/frame100.png"></div>
+      <div class="col-sm-4"><img src="morphing/intra2/movie_color2.gif"></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">Input 1</div>
+      <div class="col-sm-4">Input 2</div>
+      <div class="col-sm-4">Result</div>
+    </div>
+
+    <br/>
+    <h5>Inter-subject Morphing</h5>
+
+    <div class="row">
+      <div class="col-sm-4"><img src="morphing/inter3/frame000.png"></div>
+      <div class="col-sm-4"><img src="morphing/inter3/frame100.png"></div>
+      <div class="col-sm-4"><img src="morphing/inter3/movie_color2.gif"></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">Input 1</div>
+      <div class="col-sm-4">Input 2</div>
+      <div class="col-sm-4">Result</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4"><img src="morphing/inter2/frame000.png"></div>
+      <div class="col-sm-4"><img src="morphing/inter2/frame100.png"></div>
+      <div class="col-sm-4"><img src="morphing/inter2/movie_color2.gif"></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">Input 1</div>
+      <div class="col-sm-4">Input 2</div>
+      <div class="col-sm-4">Result</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4"><img src="morphing/inter1/frame000.png"></div>
+      <div class="col-sm-4"><img src="morphing/inter1/frame100.png"></div>
+      <div class="col-sm-4"><img src="morphing/inter1/movie_color2.gif"></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">Input 1</div>
+      <div class="col-sm-4">Input 2</div>
+      <div class="col-sm-4">Result</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4"><img src="morphing/inter4/frame000.png"></div>
+      <div class="col-sm-4"><img src="morphing/inter4/frame100.png"></div>
+      <div class="col-sm-4"><img src="morphing/inter4/movie_color2.gif"></div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4">Input 1</div>
+      <div class="col-sm-4">Input 2</div>
+      <div class="col-sm-4">Result</div>
+    </div>
+    <div class="row">
+      <div class="col-sm-4"><img src="morphing/inter5/frame000.png"></div>
+      <div class="col-sm-4"><img src="morphing/inter5/frame100.png"></div>
+      <div class="col-sm-4"><img src="morphing/inter5/movie_color2.gif"></div>
+    </div>
+    </center>
+    </div>
+
+    <!-- Bootstrap core JavaScript -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js" integrity="sha384-b/U6ypiBEHpOf/4+1nzFpr53nxSS+GLCkfwBdFNTxtclqqenISfwAzpKaMNFNmj4" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js" integrity="sha384-h0AbiXch4ZDo7tp9hKZ4TsHbi047NrKGLO3SEJAg45jXxnGIfYzk4Si90RDIqNm1" crossorigin="anonymous"></script>
+</body>
+</html>
+
