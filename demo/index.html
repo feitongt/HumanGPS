@@ -71,7 +71,7 @@
           ><span class="color-s">S</span><br />
         </h1>
         <br/>
-        1. Click Choose File to upload an image (recommended w : h = 256 : 384) or use the example images:
+        1. Click Choose File to upload a human image and a mask image (recommended w : h = 256 : 384) or use the example images:
         <button class="load-preset" onclick="loadPreset(1);">1</button>
         <button class="load-preset" onclick="loadPreset(2);">2</button>
         <button class="load-preset" onclick="loadPreset(3);">3</button>
@@ -82,6 +82,7 @@
         <button class="load-preset" onclick="SetEraser();">Eraser</button>, and
         <button class="load-preset" onclick="ClearBtn();">Clear</button> to doodle on the mask image.
         <br />
+        Note that the first time of 'Process' takes longer time for initialization.
       </div>
       <br />
       <div class="row">
@@ -131,8 +132,22 @@
       </div>
       <br />
       <div class="row">
-        <script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=5vvziwff45r&amp;m=6&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33" async="async"></script>
+          <h4>Citation</h4>
+          <br/>
+          <a href="../humangps2021.bib" target="_blank">&nbsp;BibTeX, 1 KB</a>
+          <div class="col-11">
+          <pre>@inproceedings{tan2021humangps,
+  author = {Tan, Feitong and Tang, Danhang and Mingsong, Dou and Kaiwen, Guo and Pandey, Rohit and Keskin, Cem and Du, Ruofei and Sun, Deqing and Bouaziz, Sofien and Fanello, Sean and Tan, Ping and Zhang, Yinda},
+  title = {HumanGPS: Geodesic PreServing Feature for Dense Human Correspondences},
+  booktitle = {Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR)},
+  month = {June},
+  year = {2021}
+}
+          </pre>
+          </div>
       </div>
+      <br/>
+      <script type="text/javascript" src="//rf.revolvermaps.com/0/0/8.js?i=5vvziwff45r&amp;m=6&amp;c=ff0000&amp;cr1=ffffff&amp;f=arial&amp;l=33" async="async"></script>
     </div>
     <script src="./index.js"></script>
   </body>
