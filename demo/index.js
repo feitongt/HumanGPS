@@ -1,19 +1,3 @@
-/**
- * @license
- * Copyright 2021 Google LLC. All Rights Reserved.
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- * https://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- * =============================================================================
- */
 let model;
 let info;
 let canvas;
@@ -34,6 +18,11 @@ gui.add(state, 'backend', ['webgl', 'wasm']).onChange(async backend => {
   await tf.setBackend(backend);
 });
 
+/**
+ * Changes the input image.
+ * @param {!Object} input - the input image file.
+ * @param {string} image_id - the input image id.
+ */
 function changeImage(input, image_id) {
   if (input.files && input.files.length > 0) {
     const reader = new FileReader();
@@ -48,34 +37,52 @@ function changeImage(input, image_id) {
     }
     reader.readAsDataURL(input.files[0]);
   }
-};
+}
 
-// Loads an image to the img element.
+/**
+ * Loads an image to the HTML image element.
+ * @param {string} filename - the input image file.
+ * @param {string} element_id - the target element id.
+ */
 function loadImage(filename, element_id) {
   let _img = document.getElementById(element_id);
   let newImg = new Image;
   newImg.onload = function() {
     _img.src = this.src;
-  }
+  };
+
   newImg.src = 'example_data/' + filename;
 }
 
-// Loads a mask into the mask canvas.
+
+/**
+ * Loads an image to the HTML canvas element.
+ * @param {string} filename - the input image file.
+ * @param {string} element_id - the target element id.
+ */
 function loadMask(filename, element_id) {
   let _mask = document.getElementById(element_id).getContext('2d');
   let _img = new Image;
   _img.onload = function() {
     console.log(_img.width, _img.height, WIDTH, HEIGHT);
     _mask.drawImage(_img, 0, 0, _img.width, _img.height, 0, 0, WIDTH, HEIGHT);
-  }
+  };
+
   _img.src = 'example_data/' + filename;
 }
 
+/**
+ * Loads the preset.
+ * @param {number} preset_id - preset id.
+ */
 function loadPreset(preset_id) {
   loadImage('im' + preset_id + '.jpg', 'im1');
   loadMask('im' + preset_id + '_mask.png', 'im1_mask');
 }
 
+/**
+ * Runs the model.
+ */
 function predict() {
   // Tests if the model is loaded.
   if (model == null) {
@@ -103,50 +110,44 @@ function predict() {
     tf.tidy(() => {
       // TODO: Resize images to [384, 256]; tf.image.resize...
 
-      // Normalizes the values from [0, 255] to [-1, 1], same ranged used during training.
+      // Normalizes the values from [0, 255] to [-1, 1], same ranged used during
+      // training.
       const transform = transformValueRange(0, 255, -1, 1);
 
-      // Converts the input image into a 3D tensor with shape [h, w, colorChannel].
+      // Converts the input image into a 3D tensor with shape [h, w,
+      // colorChannel].
       const image1Tensor = tf.browser.fromPixels(image1);
       const mask1Tensor = tf.browser.fromPixels(mask1);
       const image1Float = tf.cast(image1Tensor, 'float32');
       const mask1Float = tf.cast(mask1Tensor, 'float32');
 
-      const matting1 = tf.sum(mask1Float, /*axis=*/-1, /*keepdims=*/true);
+      const matting1 = tf.sum(mask1Float, /*axis=*/ -1, /*keepdims=*/ true);
       const threshold = tf.fill(matting1.shape, 150 * 3);
       const mask1Bool = tf.greater(matting1, threshold);
 
       // Masks the image
       let image1Foreground = tf.where(
-        tf.tile(mask1Bool, [1, 1, 3]),
-        image1Float,
-        tf.zerosLike(image1Float)
-      );
-      image1Foreground = tf.add(
-        tf.mul(image1Foreground, transform.scale),
-        transform.offset);
+          tf.tile(mask1Bool, [1, 1, 3]), image1Float,
+          tf.zerosLike(image1Float));
+      image1Foreground =
+          tf.add(tf.mul(image1Foreground, transform.scale), transform.offset);
 
       // Runs the model.
-      const input = [
-        tf.expandDims(mask1Bool),
-        tf.expandDims(image1Foreground)
-      ];
+      const input = [tf.expandDims(mask1Bool), tf.expandDims(image1Foreground)];
 
       const result = model.predict(input);
       const resultSqueezed = tf.squeeze(result[0]);
 
       // Adds background.
-      const rgbAndBackground = tf.where(
-        tf.tile(mask1Bool, [1, 1, 3]),
-        resultSqueezed,
-        image1Float
-      );
+      const rgbAndBackground =
+          tf.where(tf.tile(mask1Bool, [1, 1, 3]), resultSqueezed, image1Float);
 
       // Renders the result on a canvas.
       const transformBack = transformValueRange(0, 255, 0, 1);
 
       // Converts back to 0-1.
-      const rgbFinal = tf.add(tf.mul(rgbAndBackground, transformBack.scale), transformBack.offset);
+      const rgbFinal = tf.add(
+          tf.mul(rgbAndBackground, transformBack.scale), transformBack.offset);
       tf.browser.toPixels(rgbFinal, canvas);
     });
 
@@ -156,10 +157,16 @@ function predict() {
     predictButton.textContent = 'Process';
     predictButton.disabled = false;
   }, 0);
-};
+}
 
-function transformValueRange(
-    fromMin, fromMax, toMin, toMax) {
+/**
+ * Returns a pair of transform from an interval to another interval.
+ * @param {number} fromMin - min of the start interval.
+ * @param {number} fromMax - max of the start interval.
+ * @param {number} toMin - min of the ending interval.
+ * @param {number} toMax - max of the ending interval.
+ */
+function transformValueRange(fromMin, fromMax, toMin, toMax) {
   const fromRange = fromMax - fromMin;
   const ToRange = toMax - toMin;
   const scale = ToRange / fromRange;
@@ -167,34 +174,49 @@ function transformValueRange(
   return {scale, offset};
 }
 
+/**
+ * Sets the pen tool.
+ */
 function SetPen() {
   pad.minWidth = 3;
   pad.maxWidth = 5;
-  pad.penColor = "rgb(255, 255, 255)";
-  mask1.classList.add("penpad");
-  mask1.classList.remove("eraserpad");
+  pad.penColor = 'rgb(255, 255, 255)';
+  mask1.classList.add('penpad');
+  mask1.classList.remove('eraserpad');
 }
 
+/**
+ * Sets the brush tool.
+ */
 function SetBrush() {
   pad.minWidth = 10;
   pad.maxWidth = 15;
-  pad.penColor = "rgb(255, 255, 255)";
-  mask1.classList.add("penpad");
-  mask1.classList.remove("eraserpad");
+  pad.penColor = 'rgb(255, 255, 255)';
+  mask1.classList.add('penpad');
+  mask1.classList.remove('eraserpad');
 }
 
+/**
+ * Sets the eraser tool.
+ */
 function SetEraser() {
   pad.minWidth = 10;
   pad.maxWidth = 15;
-  pad.penColor = "rgb(0, 0, 0)";
-  mask1.classList.remove("penpad");
-  mask1.classList.add("eraserpad");
+  pad.penColor = 'rgb(0, 0, 0)';
+  mask1.classList.remove('penpad');
+  mask1.classList.add('eraserpad');
 }
 
+/**
+ * Sets the clear button.
+ */
 function ClearBtn() {
   loadMask('blank.png', 'im1_mask');
 }
 
+/**
+ * Sets up the page.
+ */
 async function setupPage() {
   predictButton = document.getElementById('predict');
   canvas = document.getElementById('result');
@@ -208,11 +230,11 @@ async function setupPage() {
 
   try {
     model = await tf.loadGraphModel('./model/model.json');
-  } catch(e)  {
+  } catch (e) {
     predictButton.textContent = 'Error in loading model.';
   }
   predictButton.textContent = 'Process';
   predictButton.disabled = false;
-};
+}
 
 setupPage();
