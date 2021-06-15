@@ -51,7 +51,7 @@ function loadImage(filename, element_id) {
     _img.src = this.src;
   };
 
-  newImg.src = 'example_data/' + filename;
+  newImg.src = './demo/example_data/' + filename;
 }
 
 
@@ -68,7 +68,7 @@ function loadMask(filename, element_id) {
     _mask.drawImage(_img, 0, 0, _img.width, _img.height, 0, 0, WIDTH, HEIGHT);
   };
 
-  _img.src = 'example_data/' + filename;
+  _img.src = './demo/example_data/' + filename;
 }
 
 /**
@@ -229,7 +229,7 @@ async function setupPage() {
   SetPen();
 
   try {
-    model = await tf.loadGraphModel('./model/model.json');
+    model = await tf.loadGraphModel('./demo/model/model.json');
   } catch (e) {
     predictButton.textContent = 'Error in loading model.';
   }
